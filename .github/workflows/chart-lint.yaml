@@ -1,4 +1,4 @@
-name: Helm Chart Lint
+name: Helm Chart Lint 
 
 on:
   push:

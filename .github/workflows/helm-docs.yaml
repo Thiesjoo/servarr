@@ -1,4 +1,4 @@
-name: 'Helm Chart Doc Generator'
+name: 'Helm Chart Doc Generator' 
 
 on:
   push:

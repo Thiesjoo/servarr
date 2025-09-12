@@ -17,6 +17,9 @@ spec:
       labels:
         app: "{{ .Release.Name }}"
     spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        topology.kubernetes.io/region: cloud
       restartPolicy: Never
       containers:
         - name: qbt-config-injector

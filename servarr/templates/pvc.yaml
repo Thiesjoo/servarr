@@ -9,7 +9,7 @@ metadata:
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: hook-failed
 spec:
-  storageClassName: {{ .Values.volumes.storageClass }}
+  storageClassName: {{ .Values.volumes.downloads.storageClass | default .Values.volumes.storageClass }}
   accessModes:
     - ReadWriteMany
   resources:
@@ -30,7 +30,7 @@ metadata:
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: hook-failed
 spec:
-  storageClassName: {{ .Values.volumes.storageClass }}
+  storageClassName: {{ .Values.volumes.media.storageClass | default .Values.volumes.storageClass }}
   accessModes:
     - ReadWriteMany
   resources:
@@ -51,7 +51,7 @@ metadata:
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: hook-failed
 spec:
-  storageClassName: {{ .Values.volumes.storageClass }}
+  storageClassName: {{ .Values.volumes.torrentConfig.storageClass | default .Values.volumes.storageClass }}
   accessModes:
     - ReadWriteMany
   resources:

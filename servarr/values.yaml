@@ -486,6 +486,10 @@ volumes:
     # -- Size of the downloads volume, in Kubernets format
     # @section -- Storage
     size: 100Gi
+    # -- Storage class for the downloads volume. If not specified, falls back to global storageClass
+    # @section -- Storage
+    # @default -- Uses global storageClass
+    storageClass:
   # -- configuration of the volume used for media storage (i.e.: where movies and tv shows file will be permanently stored)
   # @section -- Storage
   # @default -- See the sub fields
@@ -496,6 +500,10 @@ volumes:
     # -- Size of the media volume, in Kubernets format
     # @section -- Storage
     size: 250Gi
+    # -- Storage class for the media volume. If not specified, falls back to global storageClass
+    # @section -- Storage
+    # @default -- Uses global storageClass
+    storageClass:
   # -- configuration of the volume used for qBitTorrent internal configuration
   # @section -- Storage
   # @default -- See the sub fields
@@ -506,6 +514,10 @@ volumes:
     # -- Size of the torrent configuration volume, in Kubernets format
     # @section -- Storage
     size: 250Mi
+    # -- Storage class for the torrent configuration volume. If not specified, falls back to global storageClass
+    # @section -- Storage
+    # @default -- Uses global storageClass
+    storageClass:
 
 sonarr:
   # # -- Choose whether Sonarr should be installed or not.

@@ -11,7 +11,7 @@ metadata:
 spec:
   storageClassName: {{ .Values.volumes.downloads.storageClass | default .Values.volumes.storageClass }}
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: {{ .Values.volumes.downloads.size }}

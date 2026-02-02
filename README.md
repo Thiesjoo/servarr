@@ -32,7 +32,7 @@ $ helm dependency update
 > [!TIP]
 > If the previous command fails or goes in timeout (or takes too much), try adding the truecharts Helm repository:
 > ```shell
-> $ helm repo add truecharts oci://tccr.io/truecharts
+> $ helm repo add truecharts oci://oci.trueforge.org/truecharts
 > ```
 > and then execute again the `helm dependency update` command.
   

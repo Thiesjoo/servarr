@@ -6,6 +6,7 @@ global:
     # -- (string) Insert your storage class here, e.g.: &storageClassName network-block. Do not remove the `&storageClassName` anchor!
     # @section -- Global
 
+
   storageClassName: &storageClassName "network-block"
   # -- (string) Insert your ingress class here, e.g.: &ingressClassName nginx. Do not remove the `&ingressCassName` anchor, and do not leave the anchor value empty, otherwise you will face a `null` value error!
   # @default -- nginx
@@ -769,6 +770,16 @@ jellyfin:
         main:
           main:
             mountPath: /mnt/media
+    data:
+      enabled: true
+      type: pvc
+      size: 10Gi
+      accessModes: ReadWriteMany
+      storageClass: *storageClassName
+      targetSelector:
+        main:
+          main:
+            mountPath: /data
 
 seerr:
   # # -- Choose whether Seerr should be installed or not.

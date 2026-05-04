@@ -1,0 +1,12 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:recommended"],
+    "enabledManagers": ["helmv3", "helm-requirements", "helm-values"],
+    "ignorePaths": [".github/workflows/**"],
+    "packageRules": [
+        {
+            "matchManagers": ["helmv3", "helm-requirements", "helm-values"],
+            "bumpVersion": "patch"
+        }
+    ]
+}

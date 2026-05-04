@@ -6,6 +6,7 @@
     "packageRules": [
         {
             "matchManagers": ["helmv3", "helm-requirements", "helm-values"],
+            "groupName": "helm dependencies",
             "bumpVersion": "patch"
         }
     ]

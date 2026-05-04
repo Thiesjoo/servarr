@@ -3,8 +3,9 @@ global:
   # @default -- No default value is configured for security reasons
   # @section -- Global
   apikey: &apikey
-  # -- (string) Insert your storage class here, e.g.: &storageClassName network-block. Do not remove the `&storageClassName` anchor!
-  # @section -- Global
+    # -- (string) Insert your storage class here, e.g.: &storageClassName network-block. Do not remove the `&storageClassName` anchor!
+    # @section -- Global
+
   storageClassName: &storageClassName "network-block"
   # -- (string) Insert your ingress class here, e.g.: &ingressClassName nginx. Do not remove the `&ingressCassName` anchor, and do not leave the anchor value empty, otherwise you will face a `null` value error!
   # @default -- nginx
@@ -16,11 +17,11 @@ global:
   certManagerClusterIssuer: &issuer
 
 tags:
-  # -- (bool) This tag will deploy: Radarr, Prowlarr, QBitTorrent, Jellyseerr, Jellyfin, Flaresolverr
+  # -- (bool) This tag will deploy: Radarr, Prowlarr, QBitTorrent, Seerr, Jellyfin, Flaresolverr
   # @default -- true
   # @section -- Tags
   movies: true
-  # -- (bool) This tag will deploy: Sonarr, Prowlarr, QBitTorrent, Jellyseerr, Jellyfin, Flaresolverr
+  # -- (bool) This tag will deploy: Sonarr, Prowlarr, QBitTorrent, Seerr, Jellyfin, Flaresolverr
   # @default -- true
   # @section -- Tags
   tvseries: true
@@ -35,32 +36,32 @@ metrics:
   enabled: &metricsEnabled false
 
 # @ignore
-initJellyseerr: true
+initSeerr: true
 
 notifications:
   telegram:
     # -- Enable the Telegram notifications
-    # @section -- Jellyseerr
+    # @section -- Seerr
     enabled: true
     # -- (string) Insert the Telegram Chat id, check @get_id_bot for this
-    # @section -- Jellyseerr
+    # @section -- Seerr
     # @default -- No default value
     chat_id:
     # -- (string) Insert your Telegram Bot API token
-    # @section -- Jellyseerr
+    # @section -- Seerr
     # @default -- No default value
     bot_apitoken:
 
 dash:
-  # -- (string) Insert the Jellyfin username (will be used also for Jellyseerr)
+  # -- (string) Insert the Jellyfin username (will be used also for Seerr)
   # @section -- Jellyfin
   # @default -- No default value
   username:
-  # -- (string) Insert Jellyfin password (will be used also for Jellyseerr)
+  # -- (string) Insert Jellyfin password (will be used also for Seerr)
   # @section -- Jellyfin
   # @default -- No default value
   password:
-  # -- (string) Insert Jellyfin login mail (will be used also for Jellyseerr integration)
+  # -- (string) Insert Jellyfin login mail (will be used also for Seerr integration)
   # @section -- Jellyfin
   # @default -- No default value
   mail:
@@ -769,8 +770,8 @@ jellyfin:
           main:
             mountPath: /mnt/media
 
-jellyseerr:
-  # # -- Choose whether Jellyseerr should be installed or not.
+seerr:
+  # # -- Choose whether Seerr should be installed or not.
   # # @section Services
   # # @default -- true
   # enabled: true
@@ -814,7 +815,7 @@ jellyseerr:
     pgVersion: 16
   # @ignore
   ingress:
-    jellyseerr-ing:
+    seerr-ing:
       enabled: true
       primary: true
       required: true
@@ -823,14 +824,14 @@ jellyseerr:
         cert-manager.io/cluster-issuer: *issuer
       ingressClassName: *ingressClassName
       hosts:
-        - host: jellyseerr.local
+        - host: seerr.local
           paths:
             - path: /
               pathType: Prefix
       tls:
         - hosts:
-            - jellyseerr.local
-          secretName: jellyseerr-tls
+            - seerr.local
+          secretName: seerr-tls
       integrations:
         certManager:
           enabled: false

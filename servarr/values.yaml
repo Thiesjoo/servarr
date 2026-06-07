@@ -569,7 +569,7 @@ sonarr:
       enabled: true
       type: pvc
       size: 500Mi
-      accessModes: ReadWriteMany
+      accessModes: ReadWriteOnce
       storageClass: *storageClassName
       targetSelector:
         main:
@@ -646,7 +646,7 @@ radarr:
       enabled: true
       type: pvc
       size: 500Mi
-      accessModes: ReadWriteMany
+      accessModes: ReadWriteOnce
       storageClass: *storageClassName
       targetSelector:
         main:
@@ -695,9 +695,9 @@ jellyfin:
     pvcSize: 100Gi
     vctSize: 100Gi
     accessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
     vctAccessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
     probeTimeouts:
       liveness:
         initialDelaySeconds: 10
@@ -752,7 +752,7 @@ jellyfin:
       enabled: true
       type: pvc
       size: 500Mi
-      accessModes: ReadWriteMany
+      accessModes: ReadWriteOnce
       storageClass: *storageClassName
       targetSelector:
         main:
@@ -774,7 +774,7 @@ jellyfin:
       enabled: true
       type: pvc
       size: 10Gi
-      accessModes: ReadWriteMany
+      accessModes: ReadWriteOnce
       storageClass: *storageClassName
       targetSelector:
         main:
@@ -801,9 +801,9 @@ seerr:
     pvcSize: 100Gi
     vctSize: 100Gi
     accessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
     vctAccessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
     probeTimeouts:
       liveness:
         initialDelaySeconds: 10
@@ -854,7 +854,7 @@ seerr:
       enabled: true
       type: pvc
       size: 500Mi
-      accessModes: ReadWriteMany
+      accessModes: ReadWriteOnce
       storageClass: *storageClassName
       targetSelector:
         main:
@@ -979,7 +979,7 @@ prowlarr:
       enabled: true
       type: pvc
       size: 500Mi
-      accessModes: ReadWriteMany
+      accessModes: ReadWriteOnce
       storageClass: *storageClassName
       targetSelector:
         main:
@@ -1005,7 +1005,7 @@ flaresolverr:
       enabled: true
       type: pvc
       size: 500Mi
-      accessModes: ReadWriteMany
+      accessModes: ReadWriteOnce
       storageClass: *storageClassName
       targetSelector:
         main:

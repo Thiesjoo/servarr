@@ -492,6 +492,7 @@ volumes:
     # @section -- Storage
     # @default -- Uses global storageClass
     storageClass:
+    annotations: {}
   # -- configuration of the volume used for media storage (i.e.: where movies and tv shows file will be permanently stored)
   # @section -- Storage
   # @default -- See the sub fields
@@ -506,6 +507,7 @@ volumes:
     # @section -- Storage
     # @default -- Uses global storageClass
     storageClass:
+    annotations: {}
   # -- configuration of the volume used for qBitTorrent internal configuration
   # @section -- Storage
   # @default -- See the sub fields
@@ -520,6 +522,7 @@ volumes:
     # @section -- Storage
     # @default -- Uses global storageClass
     storageClass:
+    annotations: {}
 
 sonarr:
   # # -- Choose whether Sonarr should be installed or not.

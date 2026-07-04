@@ -549,18 +549,12 @@ sonarr:
       primary: true
       required: true
       expandObjectName: false
-      annotations:
-        cert-manager.io/cluster-issuer: *issuer
       ingressClassName: *ingressClassName
       hosts:
         - host: sonarr.local
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - hosts:
-            - sonarr.local
-          secretName: sonarr-tls
       integrations:
         certManager:
           enabled: false
@@ -626,18 +620,12 @@ radarr:
       primary: true
       required: true
       expandObjectName: false
-      annotations:
-        cert-manager.io/cluster-issuer: *issuer
       ingressClassName: *ingressClassName
       hosts:
         - host: radarr.local
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - hosts:
-            - radarr.local
-          secretName: radarr-tls
       integrations:
         certManager:
           enabled: false
@@ -730,18 +718,12 @@ jellyfin:
       primary: true
       required: true
       expandObjectName: false
-      annotations:
-        cert-manager.io/cluster-issuer: *issuer
       ingressClassName: *ingressClassName
       hosts:
         - host: jellyfin.local
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - hosts:
-            - jellyfin.local
-          secretName: jellyfin-tls
       integrations:
         certManager:
           enabled: false
@@ -834,18 +816,12 @@ seerr:
       primary: true
       required: true
       expandObjectName: false
-      annotations:
-        cert-manager.io/cluster-issuer: *issuer
       ingressClassName: *ingressClassName
       hosts:
         - host: seerr.local
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - hosts:
-            - seerr.local
-          secretName: seerr-tls
       integrations:
         certManager:
           enabled: false
@@ -895,18 +871,12 @@ qbittorrent:
       primary: true
       required: true
       expandObjectName: false
-      annotations:
-        cert-manager.io/cluster-issuer: *issuer
       ingressClassName: *ingressClassName
       hosts:
         - host: torrent.local
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - hosts:
-            - torrent.local
-          secretName: torrent-tls
       integrations:
         certManager:
           enabled: false
@@ -959,18 +929,12 @@ prowlarr:
       primary: true
       required: true
       expandObjectName: false
-      annotations:
-        cert-manager.io/cluster-issuer: *issuer
       ingressClassName: *ingressClassName
       hosts:
         - host: prowlarr.local
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - hosts:
-            - prowlarr.local
-          secretName: prowlarr-tls
       integrations:
         certManager:
           enabled: false

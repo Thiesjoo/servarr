@@ -5,17 +5,8 @@ global:
   apikey: &apikey
     # -- (string) Insert your storage class here, e.g.: &storageClassName network-block. Do not remove the `&storageClassName` anchor!
     # @section -- Global
-
-
   storageClassName: &storageClassName "network-block"
-  # -- (string) Insert your ingress class here, e.g.: &ingressClassName nginx. Do not remove the `&ingressCassName` anchor, and do not leave the anchor value empty, otherwise you will face a `null` value error!
-  # @default -- nginx
-  # @section -- Global
-  ingressClassName: &ingressClassName "nginx"
-  # -- (string) Insert your cert manager cluster issuer, e.g.: letsencrypt-cloudflare. Do not remove the `&issuer` anchor!
-  # @default -- No default value, leave empty if not required
-  # @section -- Global
-  certManagerClusterIssuer: &issuer
+
 
 tags:
   # -- (bool) This tag will deploy: Radarr, Prowlarr, QBitTorrent, Seerr, Jellyfin, Flaresolverr
@@ -606,26 +597,19 @@ radarr:
           main:
             env:
               RADARR__API_KEY: *apikey
-  # @ignore
   ingress:
-    # @ignore
     radarr-ing:
+      enabled: false
+  route:
+    main:
       enabled: true
-      primary: true
-      required: true
-      expandObjectName: false
-      ingressClassName: *ingressClassName
-      hosts:
-        - host: radarr.local
-          paths:
-            - path: /
-              pathType: Prefix
-      integrations:
-        certManager:
-          enabled: false
-        traefik:
-          enabled: false
-  # @ignore
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - radarr.local
   persistence:
     config:
       enabled: true
@@ -708,21 +692,17 @@ jellyfin:
   # @ignore
   ingress:
     jellyfin-ing:
+      enabled: false
+  route:
+    main:
       enabled: true
-      primary: true
-      required: true
-      expandObjectName: false
-      ingressClassName: *ingressClassName
-      hosts:
-        - host: jellyfin.local
-          paths:
-            - path: /
-              pathType: Prefix
-      integrations:
-        certManager:
-          enabled: false
-        traefik:
-          enabled: false
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - jellyfin.local
   # @ignore
   persistence:
     transcode:
@@ -818,21 +798,17 @@ seerr:
   # @ignore
   ingress:
     seerr-ing:
+      enabled: false
+  route:
+    main:
       enabled: true
-      primary: true
-      required: true
-      expandObjectName: false
-      ingressClassName: *ingressClassName
-      hosts:
-        - host: seerr.local
-          paths:
-            - path: /
-              pathType: Prefix
-      integrations:
-        certManager:
-          enabled: false
-        traefik:
-          enabled: false
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - seerr.local
   # @ignore
   persistence:
     config:
@@ -869,21 +845,17 @@ qbittorrent:
   # @ignore
   ingress:
     qbittorrent-ing:
+      enabled: false
+  route:
+    main:
       enabled: true
-      primary: true
-      required: true
-      expandObjectName: false
-      ingressClassName: *ingressClassName
-      hosts:
-        - host: torrent.local
-          paths:
-            - path: /
-              pathType: Prefix
-      integrations:
-        certManager:
-          enabled: false
-        traefik:
-          enabled: false
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - qbit.local
   # @ignore
   persistence:
     config:
@@ -927,21 +899,17 @@ prowlarr:
   # @ignore
   ingress:
     prowlarr-ing:
+      enabled: false
+  route:
+    main:
       enabled: true
-      primary: true
-      required: true
-      expandObjectName: false
-      ingressClassName: *ingressClassName
-      hosts:
-        - host: prowlarr.local
-          paths:
-            - path: /
-              pathType: Prefix
-      integrations:
-        certManager:
-          enabled: false
-        traefik:
-          enabled: false
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - prowlarr.local
   # @ignore
   persistence:
     config:

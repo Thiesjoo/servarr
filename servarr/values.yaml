@@ -767,6 +767,18 @@ jellyfin:
             mountPath: /data
 
 seerr:
+  workload:
+    main:
+      podSpec:
+        containers:
+          main:
+            env:
+              DB_TYPE:
+              DB_HOST:
+              DB_PORT:
+              DB_USER:
+              DB_PASS:
+              DB_NAME:
   # # -- Choose whether Seerr should be installed or not.
   # # @section Services
   # # @default -- true
@@ -851,7 +863,9 @@ seerr:
         main:
           main:
             mountPath: /mnt/media
-
+  cnpg:
+    main:
+      enabled: false
 qbittorrent:
   metrics:
     main:

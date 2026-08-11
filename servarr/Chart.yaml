@@ -2,7 +2,7 @@ apiVersion: v2
 name: servarr
 description: Servarr complete Helm Chart for Kubernetes
 type: application
-version: 1.0.15
+version: 1.0.16
 appVersion: "1.0.8"
 keywords:
   - servarr
@@ -18,19 +18,19 @@ sources:
   - https://github.com/fonzdm/servarr
 dependencies:
   - name: sonarr
-    version: "26.6.1"
+    version: "26.7.2"
     repository: "oci://oci.trueforge.org/truecharts"
     # condition: sonarr.enabled
     tags:
       - tvseries
   - name: radarr
-    version: "27.8.1"
+    version: "27.10.2"
     repository: "oci://oci.trueforge.org/truecharts"
     # condition: radarr.enabled
     tags:
       - movies
   - name: prowlarr
-    version: "22.8.3"
+    version: "22.10.1"
     repository: "oci://oci.trueforge.org/truecharts"
     # condition: prowlarr.enabled
     tags:
@@ -38,7 +38,7 @@ dependencies:
       - tvseries
       - music
   - name: qbittorrent
-    version: "25.7.2"
+    version: "25.8.1"
     repository: "oci://oci.trueforge.org/truecharts"
     # condition: qbittorrent.enabled
     tags:
@@ -53,7 +53,7 @@ dependencies:
       - movies
       - tvseries
   - name: jellyfin
-    version: "23.6.2"
+    version: "23.7.1"
     repository: "oci://oci.trueforge.org/truecharts"
     # condition: jellyfin.enabled
     tags:
@@ -61,7 +61,7 @@ dependencies:
       - tvseries
       - music
   - name: flaresolverr
-    version: "17.7.0"
+    version: "17.8.0"
     repository: "oci://oci.trueforge.org/truecharts"
     # condition: flaresolverr.enabled
     tags:

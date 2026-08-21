@@ -7,7 +7,6 @@ global:
     # @section -- Global
   storageClassName: &storageClassName "network-block"
 
-
 tags:
   # -- (bool) This tag will deploy: Radarr, Prowlarr, QBitTorrent, Seerr, Jellyfin, Flaresolverr
   # @default -- true
@@ -516,6 +515,9 @@ volumes:
     annotations: {}
 
 sonarr:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
   # # -- Choose whether Sonarr should be installed or not.
   # # @section Services
   # # @default -- true
@@ -581,6 +583,9 @@ sonarr:
             mountPath: /mnt/downloads
 
 radarr:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
   # # -- Choose whether Radarr should be installed or not.
   # # @section Services
   # # @default -- true
@@ -645,6 +650,9 @@ radarr:
             mountPath: /mnt/downloads
 
 jellyfin:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
   # # -- Choose whether Jellyfin should be installed or not.
   # # @section Services
   # # @default -- true
@@ -741,6 +749,9 @@ jellyfin:
             mountPath: /data
 
 seerr:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
   workload:
     main:
       podSpec:
@@ -831,6 +842,9 @@ seerr:
     main:
       enabled: false
 qbittorrent:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
   metrics:
     main:
       enabled: *metricsEnabled
@@ -880,6 +894,9 @@ qbittorrent:
             mountPath: /downloads
 
 prowlarr:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
   # # -- Choose whether Prowlarr should be installed or not.
   # # @section Services
   # # @default -- true
@@ -928,6 +945,9 @@ prowlarr:
             readOnly: true
 
 flaresolverr:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
   # # -- Choose whether Flaresolverr should be installed or not.
   # # @section Services
   # # @default -- true

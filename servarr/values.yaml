@@ -515,9 +515,9 @@ volumes:
     annotations: {}
 
 sonarr:
-  defaultAffinity: false
   affinity: {}
   podOptions:
+    defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
@@ -586,9 +586,9 @@ sonarr:
             mountPath: /mnt/downloads
 
 radarr:
-  defaultAffinity: false
   affinity: {}
   podOptions:
+    defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
@@ -656,9 +656,9 @@ radarr:
             mountPath: /mnt/downloads
 
 jellyfin:
-  defaultAffinity: false
   affinity: {}
   podOptions:
+    defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
@@ -758,9 +758,9 @@ jellyfin:
             mountPath: /data
 
 seerr:
-  defaultAffinity: false
   affinity: {}
   podOptions:
+    defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
@@ -855,9 +855,9 @@ seerr:
       enabled: false
 
 qbittorrent:
-  defaultAffinity: false
   affinity: {}
   podOptions:
+    defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
@@ -910,9 +910,9 @@ qbittorrent:
             mountPath: /downloads
 
 prowlarr:
-  defaultAffinity: false
   affinity: {}
   podOptions:
+    defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
@@ -964,9 +964,9 @@ prowlarr:
             readOnly: true
 
 flaresolverr:
-  defaultAffinity: false
   affinity: {}
   podOptions:
+    defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null

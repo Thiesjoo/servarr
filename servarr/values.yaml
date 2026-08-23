@@ -515,7 +515,10 @@ volumes:
     annotations: {}
 
 sonarr:
+  defaultAffinity: false
+  affinity: {}
   podOptions:
+    defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
   # # -- Choose whether Sonarr should be installed or not.
@@ -583,7 +586,10 @@ sonarr:
             mountPath: /mnt/downloads
 
 radarr:
+  defaultAffinity: false
+  affinity: {}
   podOptions:
+    defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
   # # -- Choose whether Radarr should be installed or not.
@@ -650,7 +656,10 @@ radarr:
             mountPath: /mnt/downloads
 
 jellyfin:
+  defaultAffinity: false
+  affinity: {}
   podOptions:
+    defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
   # # -- Choose whether Jellyfin should be installed or not.
@@ -749,7 +758,10 @@ jellyfin:
             mountPath: /data
 
 seerr:
+  defaultAffinity: false
+  affinity: {}
   podOptions:
+    defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
   workload:
@@ -841,8 +853,12 @@ seerr:
   cnpg:
     main:
       enabled: false
+
 qbittorrent:
+  defaultAffinity: false
+  affinity: {}
   podOptions:
+    defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
   metrics:
@@ -894,7 +910,10 @@ qbittorrent:
             mountPath: /downloads
 
 prowlarr:
+  defaultAffinity: false
+  affinity: {}
   podOptions:
+    defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
   # # -- Choose whether Prowlarr should be installed or not.
@@ -945,7 +964,10 @@ prowlarr:
             readOnly: true
 
 flaresolverr:
+  defaultAffinity: false
+  affinity: {}
   podOptions:
+    defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
   # # -- Choose whether Flaresolverr should be installed or not.

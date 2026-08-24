@@ -1,23 +1,6 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.volumes.downloads.name }}
-{{- if .Values.volumes.downloads.annotations }}
-  annotations:
-{{ toYaml .Values.volumes.downloads.annotations | indent 4 }}
-{{- end }}
-spec:
-  storageClassName: {{ .Values.volumes.downloads.storageClass | default .Values.volumes.storageClass }}
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.volumes.downloads.size }}
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: {{ .Values.volumes.media.name }}
 {{- if .Values.volumes.media.annotations }}
   annotations:
@@ -26,24 +9,24 @@ metadata:
 spec:
   storageClassName: {{ .Values.volumes.media.storageClass | default .Values.volumes.storageClass }}
   accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: {{ .Values.volumes.media.size }}
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Values.volumes.torrentConfig.name }}
-{{- if .Values.volumes.torrentConfig.annotations }}
-  annotations:
-{{ toYaml .Values.volumes.torrentConfig.annotations | indent 4 }}
-{{- end }}
-spec:
-  storageClassName: {{ .Values.volumes.torrentConfig.storageClass | default .Values.volumes.storageClass }}
-  accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.volumes.torrentConfig.size }}
+      storage: {{ .Values.volumes.media.size }}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.volumes.homemedia.name }}
+{{- if .Values.volumes.homemedia.annotations }}
+  annotations:
+{{ toYaml .Values.volumes.homemedia.annotations | indent 4 }}
+{{- end }}
+spec:
+  storageClassName: {{ .Values.volumes.homemedia.storageClass | default .Values.volumes.storageClass }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.volumes.homemedia.size }}

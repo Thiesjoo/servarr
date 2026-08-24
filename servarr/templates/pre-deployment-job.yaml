@@ -40,11 +40,11 @@ spec:
               mountPath: /mnt
             - name: init-script
               mountPath: /tmp/init-qbittorrent.py
-              subPath: init-qbittorrent.py 
+              subPath: init-qbittorrent.py
       volumes:
       - name: torrent-config-volume
         persistentVolumeClaim:
-          claimName: {{ .Values.volumes.torrentConfig.name }}
+          claimName: "{{ .Release.Name }}-qbittorrent-config"
       - name: init-script
         configMap:
           name: init-qbittorrent-python-script

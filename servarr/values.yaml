@@ -5,7 +5,7 @@ global:
   apikey: &apikey
     # -- (string) Insert your storage class here, e.g.: &storageClassName network-block. Do not remove the `&storageClassName` anchor!
     # @section -- Global
-  storageClassName: &storageClassName "network-block"
+  configStorageClassName: &configStorageClassName "longhorn"
 
 tags:
   # -- (bool) This tag will deploy: Radarr, Prowlarr, QBitTorrent, Seerr, Jellyfin, Flaresolverr
@@ -466,79 +466,63 @@ indexers:
       tags: []
 
 volumes:
-  # @ignore
-  storageClass: *storageClassName
-  # -- configuration of the volume used for torrent downloads
-  # @section -- Storage
-  # @default -- See the sub fields
-  downloads:
-    # -- Name of the download pvc. Do not remove the `&downloads-volume` anchor!
-    # @section -- Storage
-    name: &downloads-volume downloads-volume
-    # -- Size of the downloads volume, in Kubernets format
-    # @section -- Storage
-    size: 100Gi
-    # -- Storage class for the downloads volume. If not specified, falls back to global storageClass
-    # @section -- Storage
-    # @default -- Uses global storageClass
-    storageClass:
-    annotations: {}
-  # -- configuration of the volume used for media storage (i.e.: where movies and tv shows file will be permanently stored)
-  # @section -- Storage
-  # @default -- See the sub fields
+  # Unified Local Remote Volume for Atomic Hardlinks
+  # Subdirectories on disk:
+  #   /data/downloads/complete
+  #   /data/downloads/incomplete
+  #   /data/media/movies-hd
+  #   /data/media/movies-4k
+  #   /data/media/tv
+  # Bittorrent:
+  #     Default Save Path: /data/downloads/complete
+  #     Incomplete Save Path: /data/downloads/incomplete
+
+  # Radarr (HD):
+  #     Root Folder 1 (Remote Fast): /data/media/movies-hd (Hardlinks instantly)
+  #     Root Folder 2 (Home NAS): /mnt/media-home/movies (Copies over NFS)
+
+  # Radarr-4K:
+  #     Root Folder 1 (Remote Fast): /data/media/movies-4k (Hardlinks instantly)
+  #     Root Folder 2 (Home NAS): /mnt/media-home/movies-4k (Copies over NFS)
+
+  # Overseerr / Jellyseerr:
+  #     Connect both Radarr and Radarr-4K as separate servers.
+  #     When requesting a title, pick the server profile and target root folder (/data/... vs /mnt/media-home/...).
   media:
-    # -- Name of the media pvc. Do not remove the `&media-volume` anchor!
-    # @section -- Storage
-    name: &media-volume media-volume
-    # -- Size of the media volume, in Kubernets format
-    # @section -- Storage
-    size: 250Gi
-    # -- Storage class for the media volume. If not specified, falls back to global storageClass
-    # @section -- Storage
-    # @default -- Uses global storageClass
-    storageClass:
-    annotations: {}
-  # -- configuration of the volume used for qBitTorrent internal configuration
-  # @section -- Storage
-  # @default -- See the sub fields
-  torrentConfig:
-    # -- Name of the torrent configuration pvc. Do not remove the `&torrentConfig` anchor!
-    # @section -- Storage
-    name: &torrentConfig torrent-config
-    # -- Size of the torrent configuration volume, in Kubernets format
-    # @section -- Storage
-    size: 250Mi
-    # -- Storage class for the torrent configuration volume. If not specified, falls back to global storageClass
-    # @section -- Storage
-    # @default -- Uses global storageClass
-    storageClass:
+    name: &media-volume remote-downloads-and-media
+    size: 500Gi
+    storageClass: "slowtank"
     annotations: {}
 
-sonarr:
+  # Remote NFS Share targeting your Home NAS
+  homemedia:
+    name: &homemedia-volume home-nfs-media-volume
+    size: 2Ti
+    storageClass: "truenas-media"
+    annotations: {}
+
+# ------------------------------------------------------------------------------
+# Download Client: Must write inside the unified /data mount
+# ------------------------------------------------------------------------------
+qbittorrent:
   affinity: {}
   podOptions:
     defaultAffinity: false
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
-  # # -- Choose whether Sonarr should be installed or not.
-  # # @section Services
-  # # @default -- true
-  # enabled: true
-  # @ignore
   metrics:
     main:
       enabled: *metricsEnabled
-  # @ignore
   workload:
     main:
       podSpec:
         containers:
           main:
             env:
-              SONARR__API_KEY: *apikey
+              QBITTORRENT__USE_PROFILE: true
   ingress:
-    sonarr-ing:
+    qbittorrent-ing:
       enabled: false
   route:
     main:
@@ -549,42 +533,26 @@ sonarr:
           name: internal-gateway
           namespace: kube-system
       hostnames:
-        - sonarr.local
-  # @ignore
+        - qbit.local
   persistence:
     config:
       enabled: true
       type: pvc
       size: 500Mi
       accessModes: ReadWriteOnce
-      storageClass: *storageClassName
-      targetSelector:
-        main:
-          main:
-            mountPath: /config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true
-    # @ignore
-    media:
+      storageClass: *configStorageClassName
+    data:
       enabled: true
       type: pvc
       existingClaim: *media-volume
       targetSelector:
         main:
           main:
-            mountPath: /mnt/media
-    # @ignore
-    downloads:
-      enabled: true
-      type: pvc
-      existingClaim: *downloads-volume
-      targetSelector:
-        main:
-          main:
-            mountPath: /mnt/downloads
+            mountPath: /data
 
+# ------------------------------------------------------------------------------
+# Radarr Instance 1: Standard HD (1080p)
+# ------------------------------------------------------------------------------
 radarr:
   affinity: {}
   podOptions:
@@ -592,15 +560,9 @@ radarr:
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
-  # # -- Choose whether Radarr should be installed or not.
-  # # @section Services
-  # # @default -- true
-  # enabled: true
-  # @ignore
   metrics:
     main:
       enabled: *metricsEnabled
-  # @ignore
   workload:
     main:
       podSpec:
@@ -627,48 +589,40 @@ radarr:
       type: pvc
       size: 500Mi
       accessModes: ReadWriteOnce
-      storageClass: *storageClassName
+      storageClass: *configStorageClassName
       targetSelector:
         main:
           main:
             mountPath: /config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true
-    # @ignore
-    media:
+    # Single root mount allows atomic hardlinks from /data/downloads -> /data/media/movies-hd
+    data:
       enabled: true
       type: pvc
       existingClaim: *media-volume
       targetSelector:
         main:
           main:
-            mountPath: /mnt/media
-    # @ignore
-    downloads:
+            mountPath: /data
+    # Home NFS Mount for copying directly across WAN
+    homemedia:
       enabled: true
       type: pvc
-      existingClaim: *downloads-volume
+      existingClaim: *homemedia-volume
       targetSelector:
         main:
           main:
-            mountPath: /mnt/downloads
+            mountPath: /mnt/media-home
 
-
+# ------------------------------------------------------------------------------
+# Radarr Instance 2: 4K UHD
+# ------------------------------------------------------------------------------
 radarr-4k:
   podOptions:
     nodeSelector:
       kubernetes.io/arch: null
-  # # -- Choose whether Radarr should be installed or not.
-  # # @section Services
-  # # @default -- true
-  # enabled: true
-  # @ignore
   metrics:
     main:
       enabled: *metricsEnabled
-  # @ignore
   workload:
     main:
       podSpec:
@@ -677,7 +631,7 @@ radarr-4k:
             env:
               RADARR__API_KEY: *apikey
   ingress:
-    radarr-ing:
+    radarr-4k-ing:
       enabled: false
   route:
     main:
@@ -688,42 +642,96 @@ radarr-4k:
           name: internal-gateway
           namespace: kube-system
       hostnames:
-        - radarr4k.local
+        - radarr-4k.local
   persistence:
     config:
       enabled: true
       type: pvc
       size: 500Mi
       accessModes: ReadWriteOnce
-      storageClass: *storageClassName
+      storageClass: *configStorageClassName
       targetSelector:
         main:
           main:
             mountPath: /config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true
-    # @ignore
-    media:
+    data:
       enabled: true
       type: pvc
       existingClaim: *media-volume
       targetSelector:
         main:
           main:
-            mountPath: /mnt/media
-    # @ignore
-    downloads:
+            mountPath: /data
+    homemedia:
       enabled: true
       type: pvc
-      existingClaim: *downloads-volume
+      existingClaim: *homemedia-volume
       targetSelector:
         main:
           main:
-            mountPath: /mnt/downloads
+            mountPath: /mnt/media-home
 
+# ------------------------------------------------------------------------------
+# Sonarr (TV Shows)
+# ------------------------------------------------------------------------------
+sonarr:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
+  metrics:
+    main:
+      enabled: *metricsEnabled
+  workload:
+    main:
+      podSpec:
+        containers:
+          main:
+            env:
+              SONARR__API_KEY: *apikey
+  ingress:
+    sonarr-ing:
+      enabled: false
+  route:
+    main:
+      enabled: true
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - sonarr.local
+  persistence:
+    config:
+      enabled: true
+      type: pvc
+      size: 500Mi
+      accessModes: ReadWriteOnce
+      storageClass: *configStorageClassName
+      targetSelector:
+        main:
+          main:
+            mountPath: /config
+    data:
+      enabled: true
+      type: pvc
+      existingClaim: *media-volume
+      targetSelector:
+        main:
+          main:
+            mountPath: /data
+    homemedia:
+      enabled: true
+      type: pvc
+      existingClaim: *homemedia-volume
+      targetSelector:
+        main:
+          main:
+            mountPath: /mnt/media-home
 
+# ------------------------------------------------------------------------------
+# Jellyfin (Media Server)
+# ------------------------------------------------------------------------------
 jellyfin:
   affinity: {}
   podOptions:
@@ -731,17 +739,11 @@ jellyfin:
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
-  # # -- Choose whether Jellyfin should be installed or not.
-  # # @section Services
-  # # @default -- true
-  # enabled: true
-  # @ignore
   metrics:
     main:
       enabled: *metricsEnabled
-  # @ignore
   fallbackDefaults:
-    storageClass:
+    storageClass: *configStorageClassName
     probeType: http
     serviceProtocol: tcp
     serviceType: ClusterIP
@@ -773,9 +775,6 @@ jellyfin:
         failureThreshold: 60
         successThreshold: 1
     pgVersion: 16
-  # @ignore
-  serviceProtocol: tcp
-  # @ignore
   ingress:
     jellyfin-ing:
       enabled: false
@@ -789,7 +788,6 @@ jellyfin:
           namespace: kube-system
       hostnames:
         - jellyfin.local
-  # @ignore
   persistence:
     transcode:
       enabled: false
@@ -798,15 +796,21 @@ jellyfin:
       type: pvc
       size: 500Mi
       accessModes: ReadWriteOnce
-      storageClass: *storageClassName
+      storageClass: *configStorageClassName
       targetSelector:
         main:
           main:
             mountPath: /config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true
+    data:
+      enabled: true
+      type: pvc
+      size: 10Gi
+      accessModes: ReadWriteOnce
+      storageClass: *configStorageClassName
+      targetSelector:
+        main:
+          main:
+            mountPath: /data
     media:
       enabled: true
       type: pvc
@@ -815,17 +819,18 @@ jellyfin:
         main:
           main:
             mountPath: /mnt/media
-    data:
+    homemedia:
       enabled: true
       type: pvc
-      size: 10Gi
-      accessModes: ReadWriteOnce
-      storageClass: *storageClassName
+      existingClaim: *homemedia-volume
       targetSelector:
         main:
           main:
-            mountPath: /data
+            mountPath: /mnt/media-home
 
+# ------------------------------------------------------------------------------
+# Seerr & Supporting Apps
+# ------------------------------------------------------------------------------
 seerr:
   affinity: {}
   podOptions:
@@ -901,82 +906,22 @@ seerr:
           namespace: kube-system
       hostnames:
         - seerr.local
-  # @ignore
   persistence:
     config:
       enabled: true
       type: pvc
       size: 500Mi
       accessModes: ReadWriteOnce
-      storageClass: *storageClassName
+      storageClass: *configStorageClassName
       targetSelector:
         main:
           main:
             mountPath: /app/config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true
     media:
       enabled: false
   cnpg:
     main:
       enabled: false
-
-qbittorrent:
-  affinity: {}
-  podOptions:
-    defaultAffinity: false
-    defaultSpread: false
-    nodeSelector:
-      kubernetes.io/arch: null
-  metrics:
-    main:
-      enabled: *metricsEnabled
-  # @ignore
-  workload:
-    main:
-      podSpec:
-        containers:
-          main:
-            env:
-              QBITTORRENT__USE_PROFILE: true
-  # @ignore
-  ingress:
-    qbittorrent-ing:
-      enabled: false
-  route:
-    main:
-      enabled: true
-      parentRefs:
-        - group: gateway.networking.k8s.io
-          kind: Gateway
-          name: internal-gateway
-          namespace: kube-system
-      hostnames:
-        - qbit.local
-  # @ignore
-  persistence:
-    config:
-      enabled: true
-      type: pvc
-      existingClaim: *torrentConfig
-      targetSelector:
-        main:
-          main:
-            mountPath: /config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true
-    downloads:
-      enabled: true
-      type: pvc
-      existingClaim: *downloads-volume
-      targetSelector:
-        main:
-          main:
-            mountPath: /downloads
 
 prowlarr:
   affinity: {}
@@ -985,15 +930,9 @@ prowlarr:
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
-  # # -- Choose whether Prowlarr should be installed or not.
-  # # @section Services
-  # # @default -- true
-  # enabled: true
-  # @ignore
   metrics:
     main:
       enabled: *metricsEnabled
-  # @ignore
   workload:
     main:
       podSpec:
@@ -1001,7 +940,6 @@ prowlarr:
           main:
             env:
               PROWLARR__API_KEY: *apikey
-  # @ignore
   ingress:
     prowlarr-ing:
       enabled: false
@@ -1015,22 +953,17 @@ prowlarr:
           namespace: kube-system
       hostnames:
         - prowlarr.local
-  # @ignore
   persistence:
     config:
       enabled: true
       type: pvc
       size: 500Mi
       accessModes: ReadWriteOnce
-      storageClass: *storageClassName
+      storageClass: *configStorageClassName
       targetSelector:
         main:
           main:
             mountPath: /config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true
 
 flaresolverr:
   affinity: {}
@@ -1039,27 +972,17 @@ flaresolverr:
     defaultSpread: false
     nodeSelector:
       kubernetes.io/arch: null
-  # # -- Choose whether Flaresolverr should be installed or not.
-  # # @section Services
-  # # @default -- true
-  # enabled: true
-  # @ignore
   metrics:
     main:
       enabled: *metricsEnabled
-  # @ignore
   persistence:
     config:
       enabled: true
       type: pvc
       size: 500Mi
       accessModes: ReadWriteOnce
-      storageClass: *storageClassName
+      storageClass: *configStorageClassName
       targetSelector:
         main:
           main:
             mountPath: /config
-        exportarr:
-          exportarr:
-            mountPath: /config
-            readOnly: true

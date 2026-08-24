@@ -29,6 +29,12 @@ dependencies:
     # condition: radarr.enabled
     tags:
       - movies
+  - name: radarr
+    alias: radarr-4k
+    version: "27.10.4"
+    repository: "oci://oci.trueforge.org/truecharts"
+    tags:
+      - movies
   - name: prowlarr
     version: "22.10.3"
     repository: "oci://oci.trueforge.org/truecharts"

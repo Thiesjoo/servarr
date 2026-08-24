@@ -655,6 +655,75 @@ radarr:
           main:
             mountPath: /mnt/downloads
 
+
+radarr-4k:
+  podOptions:
+    nodeSelector:
+      kubernetes.io/arch: null
+  # # -- Choose whether Radarr should be installed or not.
+  # # @section Services
+  # # @default -- true
+  # enabled: true
+  # @ignore
+  metrics:
+    main:
+      enabled: *metricsEnabled
+  # @ignore
+  workload:
+    main:
+      podSpec:
+        containers:
+          main:
+            env:
+              RADARR__API_KEY: *apikey
+  ingress:
+    radarr-ing:
+      enabled: false
+  route:
+    main:
+      enabled: true
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - radarr4k.local
+  persistence:
+    config:
+      enabled: true
+      type: pvc
+      size: 500Mi
+      accessModes: ReadWriteOnce
+      storageClass: *storageClassName
+      targetSelector:
+        main:
+          main:
+            mountPath: /config
+        exportarr:
+          exportarr:
+            mountPath: /config
+            readOnly: true
+    # @ignore
+    media:
+      enabled: true
+      type: pvc
+      existingClaim: *media-volume
+      targetSelector:
+        main:
+          main:
+            mountPath: /mnt/media
+    # @ignore
+    downloads:
+      enabled: true
+      type: pvc
+      existingClaim: *downloads-volume
+      targetSelector:
+        main:
+          main:
+            mountPath: /mnt/downloads
+
+
 jellyfin:
   affinity: {}
   podOptions:

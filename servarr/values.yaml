@@ -965,6 +965,41 @@ prowlarr:
           main:
             mountPath: /config
 
+profilarr:
+  affinity: {}
+  podOptions:
+    defaultAffinity: false
+    defaultSpread: false
+    nodeSelector:
+      kubernetes.io/arch: null
+  metrics:
+    main:
+      enabled: *metricsEnabled
+  workload:
+    main:
+      podSpec:
+        containers:
+          main:
+            env:
+              ORIGIN: "{{ .Values.route.main.hostnames | first }}"
+  route:
+    main:
+      enabled: true
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal-gateway
+          namespace: kube-system
+      hostnames:
+        - profilarr.local
+  persistence:
+    config:
+      enabled: true
+      type: pvc
+      size: 500Mi
+      accessModes: ReadWriteOnce
+      storageClass: *configStorageClassName
+
 flaresolverr:
   affinity: {}
   podOptions:

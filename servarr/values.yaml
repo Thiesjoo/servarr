@@ -981,7 +981,7 @@ profilarr:
         containers:
           main:
             env:
-              ORIGIN: "{{ .Values.route.main.hostnames | first }}"
+              ORIGIN: "https://{{ .Values.route.main.hostnames | first }}"
   route:
     main:
       enabled: true

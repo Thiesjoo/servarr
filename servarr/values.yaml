@@ -733,6 +733,8 @@ sonarr:
 # Jellyfin (Media Server)
 # ------------------------------------------------------------------------------
 jellyfin:
+  resources:
+    limits: {}
   affinity: {}
   podOptions:
     defaultAffinity: false

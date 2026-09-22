@@ -60,7 +60,7 @@ dependencies:
       - movies
       - tvseries
   - name: jellyfin
-    version: "23.9.2"
+    version: "24.1.2"
     repository: "oci://oci.trueforge.org/truecharts"
     # condition: jellyfin.enabled
     tags:
